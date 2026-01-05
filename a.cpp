@@ -24,7 +24,7 @@ int time_meter()
 
     printf("%i/%i/%i - %i:%i:%i\n", (ctm01->tm_mon)+1, ctm01->tm_mday, (ctm01->tm_year)+1900, ctm01->tm_hour, ctm01->tm_min, ctm01->tm_sec);
 
-
+    printf("UNIX Time: %ld\n", tm01);
 
 
 
