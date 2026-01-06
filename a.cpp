@@ -20,6 +20,43 @@ struct caldate
     int status;
 };
 
+struct caldate compute_elapsed(time_t time1, time_t time2)
+{
+    struct caldate elapsed;
+    elapsed.month = 0;
+    elapsed.day = 0;
+    elapsed.year = 0;
+    elapsed.status = P_OK;
+    
+    if (time2 < time1) {
+        elapsed.status = P_ERR_VAL;
+        return elapsed;
+    }
+    
+    double diff = difftime(time2, time1);
+    int days = (int)(diff / 86400);
+    
+    elapsed.year = days / 365;
+    days %= 365;
+    elapsed.month = days / 30;
+    elapsed.day = days % 30;
+    
+    return elapsed;
+};
+
+int validate_day_range(int month, int day, int year)
+{
+    int days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    
+    if (month < 1 || month > 12) return P_ERR_RANGE;
+    
+    if (month == 2 && ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)))
+        days_in_month[1] = 29;
+    
+    return (day >= 1 && day <= days_in_month[month - 1]) ? P_OK : P_ERR_RANGE;
+};
+
+
 
 struct caldate calinit(char str01[STR_SIZE])
 {
@@ -65,7 +102,8 @@ struct caldate calinit(char str01[STR_SIZE])
         if( 
             (calprocess.month>=1 && calprocess.month<=12) && 
             (calprocess.day>=1 && calprocess.day<=31) && 
-            (calprocess.year>=1500 && calprocess.year<=5000)
+            (calprocess.year>=1500 && calprocess.year<=5000) &&
+            (validate_day_range(calprocess.month, calprocess.day, calprocess.year) == P_OK)
         )
         {
             res=P_OK;
@@ -88,7 +126,8 @@ struct caldate calinit(char str01[STR_SIZE])
 
 };
 
-int time_meter()
+
+struct caldate time_meter(struct caldate calinquire)
 {
 
     char buff[STR_SIZE];
@@ -105,13 +144,14 @@ int time_meter()
     tm02=time(NULL);
     ctm02=localtime(&tm02);
 
-    printf("%i/%i/%i - %i:%i:%i\n", (ctm01->tm_mon)+1, ctm01->tm_mday, (ctm01->tm_year)+1900, ctm01->tm_hour, ctm01->tm_min, ctm01->tm_sec);
+    ctm02->tm_mon=calinquire.month-1;
+    ctm02->tm_mday=calinquire.day;
+    ctm02->tm_year=calinquire.year-1900;
 
-    printf("UNIX Time: %ld\n", tm01);
+    tm02=mktime(ctm02);
 
+    return compute_elapsed(tm02, tm01);
 
-
-    return P_OK;
 
 };
 
@@ -120,6 +160,7 @@ int time_meter()
 int main(int argc, char* argv[])
 {
     struct caldate caldate;
+    struct caldate calresult;
 
     char str01[STR_SIZE];
 
@@ -130,18 +171,22 @@ int main(int argc, char* argv[])
 
     if( caldate.status == P_OK )
     {
-        printf("Input OK...\n");
-        printf("%i - %i - %i\n", caldate.month, caldate.day, caldate.year);
+        calresult=time_meter(caldate);
+
+        printf("Elapsed: %d Years, %d Months, %d Days\n", calresult.year, calresult.month, calresult.day);  
+           
+
         
     }else
+    if(caldate.status == P_ERR_RANGE)
     {
-        printf("Program Error...\n");
-        printf("%i - %i - %i\n", caldate.month, caldate.day, caldate.year);
-
+        printf("Program Error: Value Out of Range...\n");
+        printf("Input in MMDDYYYY. MM<01-12> DD<01-31> YYYY<1500-5000>\n");
+    }else
+    {
+        printf("Program Error: Input not in Integer\n");
     };
 
-
-    
 
     return 0;
 
