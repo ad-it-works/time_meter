@@ -164,7 +164,9 @@ int main(int argc, char* argv[])
 
     char str01[STR_SIZE];
 
-    printf("Enter Cal: MMDDYYYY\n");
+    printf("Elapsed Date Calculator Program\n");
+    printf("-------------------------------\n");
+    printf("Enter the Date values: MMDDYYYY\n");
     scanf("%s", &str01);
 
     caldate=calinit(str01);
@@ -173,9 +175,14 @@ int main(int argc, char* argv[])
     {
         calresult=time_meter(caldate);
 
-        printf("Elapsed: %d Years, %d Months, %d Days\n", calresult.year, calresult.month, calresult.day);  
+        if(calresult.status == P_OK)
+        {
+            printf("Elapsed Time: %d Years, %d Months, %d Days\n", calresult.year, calresult.month, calresult.day);
+        }else
+        {
+            printf("Program Error: Inputed date not solvable...\n");
+        };
            
-
         
     }else
     if(caldate.status == P_ERR_RANGE)
@@ -190,4 +197,4 @@ int main(int argc, char* argv[])
 
     return 0;
 
-}
+};
