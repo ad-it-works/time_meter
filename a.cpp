@@ -1,3 +1,17 @@
+/*
+ * Time Meter Program
+ * Measures elapsed time from a given date to the current date
+ * Input: Date in MMDDYYYY format
+ * Output: Elapsed time in years, months, and days
+ */
+
+
+// ------------------------------------
+// ************************************
+// preprocessor declaration
+// ************************************
+// ------------------------------------
+
 #define P_OK 0
 #define P_ERR_RANGE -5
 #define P_ERR_VAL -10
@@ -11,6 +25,16 @@
 #include <time.h>
 
 
+// ----------------------------------------
+// ****************************************
+// Functions & Object Declaration
+// ****************************************
+// ----------------------------------------
+
+
+// ---------------------------------
+// caldate structure
+// ----------------------------------
 struct caldate
 {
     int month;
@@ -20,14 +44,28 @@ struct caldate
     int status;
 };
 
+
+// ----------------------------------
+// function caldate
+// ----------------------------------
 struct caldate compute_elapsed(time_t time1, time_t time2)
 {
+    //  -----------------------------------
+    // variables and object declaration
     struct caldate elapsed;
     elapsed.month = 0;
     elapsed.day = 0;
     elapsed.year = 0;
     elapsed.status = P_OK;
     
+    // ----------------------------------
+    // function body
+
+
+    if (time1 < 0 || time2 < 0) {
+        elapsed.status = P_ERR_VAL;
+        return elapsed;
+    }
     if (time2 < time1) {
         elapsed.status = P_ERR_VAL;
         return elapsed;
@@ -41,13 +79,24 @@ struct caldate compute_elapsed(time_t time1, time_t time2)
     elapsed.month = days / 30;
     elapsed.day = days % 30;
     
+    // return the result
     return elapsed;
 };
 
+
+// ---------------------------------------------------
+// function validate_day_range
+// ---------------------------------------------------
 int validate_day_range(int month, int day, int year)
 {
+    // ---------------------------------
+    // variable and data declaration
     int days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     
+    // ---------------------------------
+    // function body
+
+    if (year < 1500 || year > 5000) return P_ERR_RANGE;
     if (month < 1 || month > 12) return P_ERR_RANGE;
     
     if (month == 2 && ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)))
@@ -57,10 +106,14 @@ int validate_day_range(int month, int day, int year)
 };
 
 
-
+// ---------------------------------------------------
+// function calinit
+// --------------------------------------------------
 struct caldate calinit(char str01[STR_SIZE])
 {
 
+    // ----------------------------------------------
+    // variable declaration
     struct caldate calprocess;
 
     int res;
@@ -71,6 +124,11 @@ struct caldate calinit(char str01[STR_SIZE])
     char str_day[10];
     char str_year[10];
 
+    
+    // ----------------------------------------------
+    // function body
+
+    memset(str_month, 0, sizeof(str_month));
     calprocess.month=0;
     calprocess.day=0;
     calprocess.year=0;
@@ -126,10 +184,14 @@ struct caldate calinit(char str01[STR_SIZE])
 
 };
 
-
+// ---------------------------------------------------------
+// funcction time_meter
+// ---------------------------------------------------------
 struct caldate time_meter(struct caldate calinquire)
 {
 
+    // ----------------------------------
+    // variable declaration
     char buff[STR_SIZE];
 
     time_t tm01;
@@ -137,6 +199,9 @@ struct caldate time_meter(struct caldate calinquire)
 
     struct tm *ctm01;
     struct tm *ctm02;
+
+    // ----------------------------------
+    // function body
 
     tm01=time(NULL);
     ctm01=localtime(&tm01);
@@ -156,13 +221,26 @@ struct caldate time_meter(struct caldate calinquire)
 };
 
 
-
+// ---------------------------------------------
+// *********************************************
+// Program Entry Point
+// *********************************************
+// ---------------------------------------------
 int main(int argc, char* argv[])
 {
+    
+    // ----------------------------------------
+    // variable and object declaration
+    int res;
     struct caldate caldate;
     struct caldate calresult;
 
     char str01[STR_SIZE];
+
+    
+    // ------------------------------------------
+    // Actual program function
+
 
     printf("\n");
     printf("-------------------------------\n");
