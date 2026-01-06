@@ -164,10 +164,14 @@ int main(int argc, char* argv[])
 
     char str01[STR_SIZE];
 
-    printf("Elapsed Date Calculator Program\n");
+    printf("\n");
     printf("-------------------------------\n");
+    printf("Elapsed Date Calculator Program\n");
+    printf("-------------------------------\n\n");
     printf("Enter the Date values: MMDDYYYY\n");
     scanf("%s", &str01);
+
+    printf("\n");
 
     caldate=calinit(str01);
 
@@ -194,6 +198,7 @@ int main(int argc, char* argv[])
         printf("Program Error: Input not in Integer\n");
     };
 
+    printf("\n");
 
     return 0;
 
